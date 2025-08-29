@@ -1,24 +1,47 @@
+# -----------------------
+# DOCUMENTACIÓ
+# -----------------------
 HELP.md
-.gradle
+
+# -----------------------
+# GRADLE
+# -----------------------
+.gradle/
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### STS ###
+# Fitxers temporals de Gradle
+gradle-app.setting
+
+# -----------------------
+# MAVEN (si s’utilitza en algun moment)
+target/
+.mvn/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+release.properties
+
+# -----------------------
+# SPRING TOOLS SUITE (STS)
+# -----------------------
 .apt_generated
 .classpath
 .factorypath
 .project
-.settings
+.settings/
 .springBeans
-.sts4-cache
+.sts4-cache/
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 
-### IntelliJ IDEA ###
-.idea
+# -----------------------
+# INTELLIJ IDEA
+# -----------------------
+.idea/
 *.iws
 *.iml
 *.ipr
@@ -26,12 +49,40 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 
-### NetBeans ###
+# -----------------------
+# NETBEANS
+# -----------------------
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
 
-### VS Code ###
+# -----------------------
+# VISUAL STUDIO CODE
+# -----------------------
 .vscode/
+
+# -----------------------
+# SISTEMA OPERATIU
+# -----------------------
+.DS_Store
+Thumbs.db
+
+# -----------------------
+# FITXERS TEMPORALS
+# -----------------------
+*.log
+*.tmp
+*.swp
+*.bak
+*~
+
+# -----------------------
+# ALTRES
+# -----------------------
+# Fitxers de proves locals
+local.properties
+.env
+.env.local
+
