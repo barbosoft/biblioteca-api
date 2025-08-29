@@ -31,7 +31,7 @@ API RESTful per la gestió d'una biblioteca: llibres, usuaris, préstecs, i llis
    mvn spring-boot:run
 
 3. L'API estarà disponible a:
-  ```bash
+   ```bash
    http://localhost:8080/api/
 
 4. Endpoints principals (exemples)
