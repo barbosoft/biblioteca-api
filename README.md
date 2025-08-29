@@ -26,27 +26,26 @@ API RESTful per la gestió d'una biblioteca: llibres, usuaris, préstecs, i llis
    cd biblioteca-api
 
 2. Build i execució local:
-mvn clean install
-mvn spring-boot:run
+   ```bash
+   mvn clean install
+   mvn spring-boot:run
 
 3. L'API estarà disponible a:
+  ```bash
+   http://localhost:8080/api/
 
-http://localhost:8080/api/
+4. Endpoints principals (exemples)
+   ```bash 
+   GET /api/books – Llista de llibres
+   POST /api/wishlist – Afegeix un llibre a la llista de desitjos
 
-Endpoints principals (exemples)
+5. Afegeix aquí més endpoints amb breus descripcions
+   ```bash
+  
 
-GET /api/books – Llista de llibres
-
-POST /api/wishlist – Afegeix un llibre a la llista de desitjos
-
-Afegeix aquí més endpoints amb breus descripcions
-
-Eines i dependències
-
-Spring Boot – inicialització ràpida
-
-Spring Data JPA – accés a dades
-
-H2 (opcional) – base de dades en memòria per desenvolupament
-
-Swagger / OpenAPI (opcional) – per documentar i testar l’API
+6. Eines i dependències
+   ```bash
+   Spring Boot – inicialització ràpida
+   Spring Data JPA – accés a dades
+   H2 (opcional) – base de dades en memòria per desenvolupament
+   Swagger / OpenAPI (opcional) – per documentar i testar l’API
