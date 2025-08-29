@@ -1,3 +1,4 @@
+// src/main/java/com/barbosoft/biblioteca/bibliotecaapi/config/CorsConfig.java
 package com.barbosoft.biblioteca.bibliotecaapi.config;
 
 import org.springframework.context.annotation.Bean;
