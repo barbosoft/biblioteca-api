@@ -14,7 +14,7 @@ API RESTful per la gestió d'una biblioteca: llibres, usuaris, préstecs, i llis
 
 ##  Requisits
 
-- JDK 11 o superior
+- JDK 17 o superior
 - Maven 3.6+
 - (Opcional) Base de dades com **H2**, **PostgreSQL**, etc.
 
