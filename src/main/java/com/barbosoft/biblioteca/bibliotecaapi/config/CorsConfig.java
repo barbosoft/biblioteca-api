@@ -25,9 +25,18 @@ public class CorsConfig {
         // Si prefereixes patrons (per IP variable/ports), usa:
         // cfg.setAllowedOriginPatterns(List.of("http://10.0.2.2:*", "http://192.168.1.*:*"));
 
+        cfg.setAllowedOriginPatterns(List.of("*"));
         cfg.setAllowedMethods(List.of("GET","POST","PUT","DELETE","PATCH","OPTIONS"));
         cfg.setAllowedHeaders(List.of("*"));
+        cfg.setAllowCredentials(false);
+        /*
+        //cfg.setAllowCredentials(List.of("*"));
+        cfg.setAllowedMethods(List.of("GET","POST","PUT","DELETE","PATCH","OPTIONS"));
+        cfg.setAllowedHeaders(List.of("*"));
+        cfg.setAllowedHeaders(List.of("Content-Type","Authorization"));
         cfg.setAllowCredentials(true);
+
+         */
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", cfg);

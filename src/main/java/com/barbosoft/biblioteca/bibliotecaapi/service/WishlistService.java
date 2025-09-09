@@ -6,8 +6,14 @@ import com.barbosoft.biblioteca.bibliotecaapi.repository.LlibreRepository;
 import com.barbosoft.biblioteca.bibliotecaapi.repository.WishlistRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import com.barbosoft.biblioteca.bibliotecaapi.dto.WishDto;
+import com.barbosoft.biblioteca.bibliotecaapi.mapper.WishlistMapper;
+import com.barbosoft.biblioteca.bibliotecaapi.model.WishlistItem;
+import com.barbosoft.biblioteca.bibliotecaapi.repository.WishlistRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class WishlistService {
@@ -37,9 +43,39 @@ public class WishlistService {
         return wishlistRepository.save(item);
     }
 
+    public List<WishDto> getAll() {
+        return wishlistRepository.findAll()
+                .stream().map(WishlistMapper::toDto).toList();
+    }
+
+    @Transactional
+    public List<WishDto> upsertAll(List<WishDto> dtos) {
+        List<WishlistItem> toSave = new ArrayList<>();
+        for (WishDto d : dtos) {
+            if (Boolean.TRUE.equals(d.getIsDeleted())) {
+                if (d.getId() != null) wishlistRepository.deleteById(d.getId());
+                continue;
+            }
+            WishlistItem e = (d.getId() != null)
+                    ? wishlistRepository.findById(d.getId()).orElseGet(WishlistItem::new)
+                    : new WishlistItem();
+
+            WishlistMapper.fillFromDto(d, e);
+            toSave.add(e);
+        }
+        return wishlistRepository.saveAll(toSave)
+                .stream().map(WishlistMapper::toDto).toList();
+    }
+
+    @Transactional
+    public void deleteMany(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) return;
+        wishlistRepository.deleteAllById(ids);
+    }
+
     @Transactional
     public Llibre purchase(Long id) {
-        WishlistItem w = wishlistRepository.findByIsbn(String.valueOf(id))
+        WishlistItem w = wishlistRepository.findById(id)
                 .orElseThrow(()  -> new IllegalArgumentException("No existeix wishlist id: " + id));
 
         // Si ja existeix el llibre per ISBN, retorna’l (i elimina de la wishlist)
@@ -63,7 +99,7 @@ public class WishlistService {
         l = bookEnrichmentService.enrichMissing(l);
 
         Llibre saved = llibreRepository.save(l);
-        w.setPurchasedAt(LocalDateTime.now());
+        //w.setPurchasedAt(LocalDateTime.now());
         wishlistRepository.delete(w); // o bé conserva’l amb purchasedAt != null
         return saved;
     }
