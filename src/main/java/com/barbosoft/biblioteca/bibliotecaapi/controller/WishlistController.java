@@ -1,49 +1,80 @@
 package com.barbosoft.biblioteca.bibliotecaapi.controller;
 
-import com.barbosoft.biblioteca.bibliotecaapi.model.WishlistItem;
+import com.barbosoft.biblioteca.bibliotecaapi.dto.WishDto;
+import com.barbosoft.biblioteca.bibliotecaapi.mapper.WishlistMapper;
 import com.barbosoft.biblioteca.bibliotecaapi.model.Llibre;
+import com.barbosoft.biblioteca.bibliotecaapi.model.WishlistItem;
 import com.barbosoft.biblioteca.bibliotecaapi.repository.WishlistRepository;
 import com.barbosoft.biblioteca.bibliotecaapi.service.WishlistService;
-import org.springframework.http.ResponseEntity;
+import jakarta.transaction.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/wishlist")
+@CrossOrigin // si ja tens CorsConfig global, això és opcional
 public class WishlistController {
 
-    private final WishlistRepository wishlistRepository;
-    private final WishlistService wishlistService;
+    private final WishlistRepository repo;
+    private final WishlistService service;
 
-    public WishlistController(WishlistRepository wishlistRepository,
-                              WishlistService wishlistService) {
-        this.wishlistRepository = wishlistRepository;
-        this.wishlistService = wishlistService;
+    public WishlistController(WishlistRepository repo, WishlistService service) {
+        this.repo = repo;
+        this.service = service;
     }
 
+    /* -------------------- LECTURA -------------------- */
+
+    // GET /wishlist
     @GetMapping
-    public List<WishlistItem> all() {
-        return wishlistRepository.findAll();
+    public List<WishDto> getAll() {
+        return WishlistMapper.toDtoList(repo.findAll());
     }
 
-    @PostMapping
-    public ResponseEntity<?> add(@RequestBody WishlistItem item) {
-        WishlistItem saved = wishlistService.add(item);
-        return ResponseEntity.ok(saved);
+    /* -------------------- UPSERT (1) -------------------- */
+
+    // POST /wishlist/upsert   (un sol element)
+    @PostMapping("/upsert")
+    public WishDto upsert(@RequestBody WishDto dto) {
+        WishlistItem entity = (dto.getId() != null)
+                ? repo.findById(dto.getId()).orElseGet(WishlistItem::new)
+                : new WishlistItem();
+
+        WishlistMapper.fillFromDto(dto, entity);
+        WishlistItem saved = repo.save(entity);
+        return WishlistMapper.toDto(saved);
     }
 
+    /* -------------------- UPSERT (BATCH) -------------------- */
+    @Transactional
+    @PostMapping("/upsertAll")
+    public List<WishDto> upsertAll(@RequestBody List<WishDto> dtos) {
+        var entities = WishlistMapper.toEntityList(dtos);
+        var saved = repo.saveAll(entities);
+        return WishlistMapper.toDtoList(saved);
+    }
+
+    /* -------------------- DELETE -------------------- */
+
+    // DELETE /wishlist/{id}   (un sol element)
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> remove(@PathVariable Long id) {
-        if (!wishlistRepository.existsById(id)) return ResponseEntity.notFound().build();
-        wishlistRepository.deleteById(id);
-        return ResponseEntity.ok().build();
+    public void delete(@PathVariable Long id) {
+        repo.deleteById(id);
     }
 
-    @PostMapping("/{id}/purchase")
-    public ResponseEntity<?> purchase(@PathVariable Long id) {
-        Llibre llibre = wishlistService.purchase(id);
-        return ResponseEntity.ok(llibre);
+    // POST /wishlist/deleteMany   (varis elements)
+    @PostMapping("/deleteMany")
+    public void deleteMany(@RequestBody List<Long> ids) {
+        repo.deleteAllById(ids);
+    }
+
+    /* -------------------- PURCHASE -------------------- */
+
+    // POST /wishlist/purchase/{id}
+    // Mou de wishlist -> llibres i elimina de wishlist
+    @PostMapping("/purchase/{id}")
+    public Llibre purchase(@PathVariable Long id) {
+        return service.purchase(id);
     }
 }
-
